@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -156,26 +157,114 @@ class SettingsScreen extends ConsumerWidget {
 
   Future<String?> _askPassphrase(BuildContext context, {required String title}) async {
     final controller = TextEditingController();
-    return showDialog<String>(
+    final confirmController = TextEditingController();
+    final strengthNotifier = ValueNotifier<double>(0);
+    final matchNotifier = ValueNotifier<bool>(false);
+
+    void updateState() {
+      final strength = _passwordStrength(controller.text);
+      strengthNotifier.value = strength;
+      matchNotifier.value = controller.text.isNotEmpty && controller.text == confirmController.text;
+    }
+
+    controller.addListener(updateState);
+    confirmController.addListener(updateState);
+
+    final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: const InputDecoration(
-            hintText: 'Enter a password you will remember',
-          ),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Create a backup password',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: confirmController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Confirm password',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ValueListenableBuilder<double>(
+                  valueListenable: strengthNotifier,
+                  builder: (context, strength, _) {
+                    final color = _strengthColor(context, strength);
+                    final label = _strengthLabel(strength);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Strength: $label'),
+                        const SizedBox(height: 6),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            minHeight: 6,
+                            value: strength,
+                            color: color,
+                            backgroundColor: Theme.of(context).dividerColor,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
+                ValueListenableBuilder<bool>(
+                  valueListenable: matchNotifier,
+                  builder: (context, matches, _) {
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        matches ? 'Passwords match' : 'Passwords must match',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: matches
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: const Text('Continue'),
+          ValueListenableBuilder<double>(
+            valueListenable: strengthNotifier,
+            builder: (context, strength, _) {
+              return ValueListenableBuilder<bool>(
+                valueListenable: matchNotifier,
+                builder: (context, matches, __) {
+                  final enabled = matches && strength >= 0.6;
+                  return ElevatedButton(
+                    onPressed: enabled ? () => Navigator.of(context).pop(controller.text) : null,
+                    child: const Text('Continue'),
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
     );
+
+    controller.dispose();
+    confirmController.dispose();
+    strengthNotifier.dispose();
+    matchNotifier.dispose();
+    return result;
   }
 
   Future<bool> _confirmImport(BuildContext context) async {
@@ -192,6 +281,33 @@ class SettingsScreen extends ConsumerWidget {
         )) ??
         false;
   }
+}
+
+double _passwordStrength(String value) {
+  if (value.isEmpty) return 0;
+  var score = 0.0;
+  if (value.length >= 12) score += 0.35;
+  if (value.length >= 16) score += 0.15;
+  if (RegExp(r'[A-Z]').hasMatch(value)) score += 0.15;
+  if (RegExp(r'[a-z]').hasMatch(value)) score += 0.1;
+  if (RegExp(r'[0-9]').hasMatch(value)) score += 0.1;
+  if (RegExp(r'[^A-Za-z0-9]').hasMatch(value)) score += 0.15;
+  return score.clamp(0, 1);
+}
+
+String _strengthLabel(double strength) {
+  if (strength >= 0.85) return 'Excellent';
+  if (strength >= 0.7) return 'Strong';
+  if (strength >= 0.55) return 'Okay';
+  if (strength >= 0.35) return 'Weak';
+  return 'Very weak';
+}
+
+Color _strengthColor(BuildContext context, double strength) {
+  if (strength >= 0.7) return Theme.of(context).colorScheme.secondary;
+  if (strength >= 0.55) return Colors.orangeAccent;
+  if (strength >= 0.35) return Colors.deepOrangeAccent;
+  return Colors.redAccent;
 }
 
 class _ThemeOption extends StatelessWidget {

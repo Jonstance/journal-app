@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/backup_codec.dart';
 import '../models/journal_entry.dart';
+import '../repositories/local_journal_repository.dart';
 import '../repositories/journal_repository.dart';
 
 abstract class ExportService {

@@ -7,7 +7,9 @@ import '../../core/utils/date_formatters.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/pill_button.dart';
+import '../../core/widgets/voice_memo_player.dart';
 import '../../data/models/journal_entry.dart';
+import '../../data/services/attachments_service.dart';
 import '../library/library_screen.dart';
 import '../library/search_screen.dart';
 import '../reader/reader_screen.dart';
@@ -199,15 +201,25 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  MoodPicker(
-                    value: state.moodColor,
-                    onChanged: (color) => ref.read(entryDraftControllerProvider.notifier).updateMood(color),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: MoodPicker(
+                        value: state.moodColor,
+                        onChanged: (color) =>
+                            ref.read(entryDraftControllerProvider.notifier).updateMood(color),
+                      ),
+                    ),
                   ),
-                  const Spacer(),
-                  Text(
-                    state.isSaving ? 'Saving…' : 'All changes saved',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Text(
+                      state.isSaving ? 'Saving…' : 'All changes saved',
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
                     ),
                   ),
                 ],
@@ -236,23 +248,73 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                             ),
                           ),
                         ),
-                      TextField(
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: _hintForType(state.type),
-                          hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.35),
+                      Column(
+                        children: [
+                          _MarkdownToolbar(
+                            onBold: () => _wrapSelection('**'),
+                            onItalic: () => _wrapSelection('*'),
+                            onQuote: _toggleQuoteForSelection,
                           ),
-                        ),
+                          const SizedBox(height: 12),
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: _hintForType(state.type),
+                                hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.35),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
+              ),
+              if (state.attachments.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Voice memo',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...state.attachments
+                        .where((attachment) => attachment.type == AttachmentType.audio)
+                        .map((attachment) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: VoiceMemoPlayer(memo: attachment),
+                            )),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => _recordVoiceMemo(ref),
+                    icon: const Icon(Icons.mic_none),
+                    label: const Text('Add voice memo'),
+                  ),
+                  const Spacer(),
+                  Text(
+                    state.isSaving ? 'Saving…' : 'All changes saved',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Row(
@@ -311,5 +373,132 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       case EntryType.wins:
         return '• Something I finished\n• A risk I took\n• A step forward';
     }
+  }
+
+  Future<void> _recordVoiceMemo(WidgetRef ref) async {
+    HapticFeedback.selectionClick();
+    final service = ref.read(attachmentsServiceProvider);
+    final memo = await service.recordAudio();
+    if (memo != null) {
+      ref.read(entryDraftControllerProvider.notifier).addAttachment(memo);
+    }
+  }
+
+  void _wrapSelection(String wrapper) {
+    final selection = _controller.selection;
+    final text = _controller.text;
+    if (!selection.isValid) return;
+
+    final start = selection.start;
+    final end = selection.end;
+    if (start == end) {
+      final insert = '$wrapper$wrapper';
+      _controller.text = text.replaceRange(start, end, insert);
+      _controller.selection = TextSelection.collapsed(offset: start + wrapper.length);
+      return;
+    }
+
+    final selected = text.substring(start, end);
+    final wrapped = '$wrapper$selected$wrapper';
+    _controller.text = text.replaceRange(start, end, wrapped);
+    _controller.selection = TextSelection(baseOffset: start, extentOffset: start + wrapped.length);
+  }
+
+  void _toggleQuoteForSelection() {
+    final selection = _controller.selection;
+    final text = _controller.text;
+    if (!selection.isValid) return;
+
+    final start = selection.start;
+    final end = selection.end;
+    final lineStart = text.lastIndexOf('\n', start - 1) + 1;
+    final lineEnd = text.indexOf('\n', end);
+    final effectiveEnd = lineEnd == -1 ? text.length : lineEnd;
+    final line = text.substring(lineStart, effectiveEnd);
+
+    final trimmed = line.trimLeft();
+    final hasQuote = trimmed.startsWith('> ');
+    final prefix = hasQuote ? '' : '> ';
+    final updatedLine = hasQuote ? line.replaceFirst(RegExp(r'\s*> '), '') : '$prefix$line';
+
+    _controller.text = text.replaceRange(lineStart, effectiveEnd, updatedLine);
+    final delta = updatedLine.length - line.length;
+    _controller.selection = TextSelection(
+      baseOffset: (start + delta).clamp(0, _controller.text.length),
+      extentOffset: (end + delta).clamp(0, _controller.text.length),
+    );
+  }
+}
+
+class _MarkdownToolbar extends StatelessWidget {
+  const _MarkdownToolbar({
+    required this.onBold,
+    required this.onItalic,
+    required this.onQuote,
+  });
+
+  final VoidCallback onBold;
+  final VoidCallback onItalic;
+  final VoidCallback onQuote;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      children: [
+        _ToolbarButton(
+          label: 'B',
+          onTap: onBold,
+          textStyle: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(width: 8),
+        _ToolbarButton(
+          label: 'I',
+          onTap: onItalic,
+          textStyle: theme.textTheme.labelLarge?.copyWith(fontStyle: FontStyle.italic),
+        ),
+        const SizedBox(width: 8),
+        _ToolbarButton(
+          label: 'Quote',
+          onTap: onQuote,
+          textStyle: theme.textTheme.labelLarge,
+        ),
+        const Spacer(),
+        Text(
+          'Markdown-lite',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ToolbarButton extends StatelessWidget {
+  const _ToolbarButton({required this.label, required this.onTap, this.textStyle});
+
+  final String label;
+  final VoidCallback onTap;
+  final TextStyle? textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface.withOpacity(0.7),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Text(label, style: textStyle ?? theme.textTheme.labelLarge),
+      ),
+    );
   }
 }

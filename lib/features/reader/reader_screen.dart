@@ -6,7 +6,9 @@ import '../../core/utils/date_formatters.dart';
 import '../../core/utils/entry_fingerprint.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
+import '../../core/widgets/voice_memo_player.dart';
 import '../../data/models/journal_entry.dart';
+import '../../data/models/attachment_ref.dart';
 import '../library/library_providers.dart';
 
 class ReaderScreen extends ConsumerWidget {
@@ -77,6 +79,17 @@ class _ReaderContent extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 18),
+          if (entry.attachments.any((attachment) => attachment.type == AttachmentType.audio)) ...[
+            Text('Voice memo', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 10),
+            ...entry.attachments
+                .where((attachment) => attachment.type == AttachmentType.audio)
+                .map((attachment) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: VoiceMemoPlayer(memo: attachment),
+                    )),
+            const SizedBox(height: 12),
+          ],
           Row(
             children: [
               _InsightChip(label: 'On this day', onTap: () => _showOnThisDay(context, ref)),

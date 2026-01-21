@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/attachment_ref.dart';
 import '../../data/models/journal_entry.dart';
+import '../../data/repositories/local_journal_repository.dart';
 import '../../data/repositories/journal_repository.dart';
 import '../../data/services/weather_service.dart';
 
@@ -12,6 +14,7 @@ class EntryDraftState {
     required this.type,
     required this.content,
     required this.moodColor,
+    required this.attachments,
     required this.createdAt,
     required this.updatedAt,
     required this.isSaving,
@@ -24,6 +27,7 @@ class EntryDraftState {
   final EntryType type;
   final String content;
   final Color? moodColor;
+  final List<AttachmentRef> attachments;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSaving;
@@ -35,6 +39,7 @@ class EntryDraftState {
     EntryType? type,
     String? content,
     Color? moodColor,
+    List<AttachmentRef>? attachments,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSaving,
@@ -46,6 +51,7 @@ class EntryDraftState {
       type: type ?? this.type,
       content: content ?? this.content,
       moodColor: moodColor ?? this.moodColor,
+      attachments: attachments ?? this.attachments,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSaving: isSaving ?? this.isSaving,
@@ -62,6 +68,7 @@ class EntryDraftController extends StateNotifier<EntryDraftState> {
             type: EntryType.freeform,
             content: '',
             moodColor: null,
+            attachments: const [],
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
             isSaving: false,
@@ -92,6 +99,12 @@ class EntryDraftController extends StateNotifier<EntryDraftState> {
     _scheduleSave();
   }
 
+  void addAttachment(AttachmentRef attachment) {
+    final updated = [...state.attachments, attachment];
+    state = state.copyWith(attachments: updated, updatedAt: DateTime.now());
+    _scheduleSave();
+  }
+
   Future<void> completeEntry() async {
     await _saveNow(force: true);
     _resetDraft();
@@ -102,6 +115,7 @@ class EntryDraftController extends StateNotifier<EntryDraftState> {
       type: EntryType.freeform,
       content: '',
       moodColor: null,
+      attachments: const [],
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       isSaving: false,
@@ -127,6 +141,7 @@ class EntryDraftController extends StateNotifier<EntryDraftState> {
       createdAt: state.createdAt,
       updatedAt: DateTime.now(),
       moodColor: state.moodColor,
+      attachments: state.attachments,
       weatherSummary: state.weatherSummary,
       location: state.location,
     );

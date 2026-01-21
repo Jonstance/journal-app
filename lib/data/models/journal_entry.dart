@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import 'attachment_ref.dart';
+
 enum EntryType {
   freeform,
   bullets,
@@ -57,7 +59,7 @@ class JournalEntry {
   final DateTime updatedAt;
   final Color? moodColor;
   final List<String> tags;
-  final List<String> attachments;
+  final List<AttachmentRef> attachments;
   final String? location;
   final String? weatherSummary;
 
@@ -67,7 +69,7 @@ class JournalEntry {
     DateTime? updatedAt,
     Color? moodColor,
     List<String>? tags,
-    List<String>? attachments,
+    List<AttachmentRef>? attachments,
     String? location,
     String? weatherSummary,
   }) {
@@ -94,13 +96,22 @@ class JournalEntry {
       'updatedAt': updatedAt.toIso8601String(),
       'moodColor': moodColor?.value,
       'tags': tags,
-      'attachments': attachments,
+      'attachments': attachments.map((attachment) => attachment.toMap()).toList(),
       'location': location,
       'weatherSummary': weatherSummary,
     };
   }
 
   static JournalEntry fromMap(Map<dynamic, dynamic> map) {
+    final rawAttachments = map['attachments'] as List? ?? const [];
+    final attachments = rawAttachments.map((item) {
+      if (item is Map) return AttachmentRef.fromMap(item);
+      if (item is String) {
+        return AttachmentRef(path: item, type: AttachmentType.photo);
+      }
+      return null;
+    }).whereType<AttachmentRef>().toList();
+
     return JournalEntry(
       id: map['id'] as String?,
       type: EntryType.values.firstWhere(
@@ -112,7 +123,7 @@ class JournalEntry {
       updatedAt: DateTime.parse(map['updatedAt'] as String),
       moodColor: map['moodColor'] != null ? Color(map['moodColor'] as int) : null,
       tags: List<String>.from(map['tags'] as List? ?? const []),
-      attachments: List<String>.from(map['attachments'] as List? ?? const []),
+      attachments: attachments,
       location: map['location'] as String?,
       weatherSummary: map['weatherSummary'] as String?,
     );

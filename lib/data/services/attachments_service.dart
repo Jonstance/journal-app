@@ -1,30 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Attachment {
-  const Attachment({required this.id, required this.path, required this.type});
-
-  final String id;
-  final String path;
-  final AttachmentType type;
-}
-
-enum AttachmentType { photo, audio, handwriting }
+import '../models/attachment_ref.dart';
 
 abstract class AttachmentsService {
-  Future<List<Attachment>> pickPhotos();
-  Future<Attachment?> recordAudio();
-  Future<Attachment?> captureHandwriting();
+  Future<List<AttachmentRef>> pickPhotos();
+  Future<AttachmentRef?> recordAudio();
+  Future<AttachmentRef?> captureHandwriting();
 }
 
 class StubAttachmentsService implements AttachmentsService {
   @override
-  Future<List<Attachment>> pickPhotos() async => [];
+  Future<List<AttachmentRef>> pickPhotos() async => [];
 
   @override
-  Future<Attachment?> recordAudio() async => null;
+  Future<AttachmentRef?> recordAudio() async => null;
 
   @override
-  Future<Attachment?> captureHandwriting() async => null;
+  Future<AttachmentRef?> captureHandwriting() async => null;
 }
 
 final attachmentsServiceProvider = Provider<AttachmentsService>((ref) {

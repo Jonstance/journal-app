@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
@@ -96,7 +97,7 @@ class BackupCodec {
   }
 
   Uint8List _randomBytes(int length) {
-    final random = SecureRandom();
-    return Uint8List.fromList(random.nextBytes(length));
+    final random = Random.secure();
+    return Uint8List.fromList(List<int>.generate(length, (_) => random.nextInt(256)));
   }
 }
