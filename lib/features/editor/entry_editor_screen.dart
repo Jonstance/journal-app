@@ -8,6 +8,7 @@ import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/pill_button.dart';
 import '../../core/widgets/voice_memo_player.dart';
+import '../../data/models/attachment_ref.dart';
 import '../../data/models/journal_entry.dart';
 import '../../data/services/attachments_service.dart';
 import '../library/library_screen.dart';
