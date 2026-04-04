@@ -38,6 +38,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "cross_file",
+      "rootUri": "file:///Users/johnny/.pub-cache/hosted/pub.dev/cross_file-0.3.5+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///Users/johnny/.pub-cache/hosted/pub.dev/crypto-3.0.7",
       "packageUri": "lib/",
@@ -69,9 +75,9 @@
     },
     {
       "name": "file_picker",
-      "rootUri": "file:///Users/johnny/.pub-cache/hosted/pub.dev/file_picker-6.2.1",
+      "rootUri": "file:///Users/johnny/.pub-cache/hosted/pub.dev/file_picker-8.3.7",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.4"
     },
     {
       "name": "fixnum",
@@ -389,6 +395,6 @@
   "generator": "pub",
   "generatorVersion": "3.10.7",
   "flutterRoot": "file:///Users/johnny/Documents/flutter",
-  "flutterVersion": "3.38.6",
+  "flutterVersion": "3.38.7",
   "pubCache": "file:///Users/johnny/.pub-cache"
 }

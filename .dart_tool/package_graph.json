@@ -26,6 +26,23 @@
       "devDependencies": []
     },
     {
+      "name": "just_audio",
+      "version": "0.9.46",
+      "dependencies": [
+        "async",
+        "audio_session",
+        "crypto",
+        "flutter",
+        "just_audio_platform_interface",
+        "just_audio_web",
+        "meta",
+        "path",
+        "path_provider",
+        "rxdart",
+        "uuid"
+      ]
+    },
+    {
       "name": "path_provider",
       "version": "2.1.5",
       "dependencies": [
@@ -35,19 +52,6 @@
         "path_provider_linux",
         "path_provider_platform_interface",
         "path_provider_windows"
-      ]
-    },
-    {
-      "name": "file_picker",
-      "version": "6.2.1",
-      "dependencies": [
-        "ffi",
-        "flutter",
-        "flutter_plugin_android_lifecycle",
-        "flutter_web_plugins",
-        "path",
-        "plugin_platform_interface",
-        "win32"
       ]
     },
     {
@@ -158,6 +162,65 @@
       ]
     },
     {
+      "name": "meta",
+      "version": "1.17.0",
+      "dependencies": []
+    },
+    {
+      "name": "crypto",
+      "version": "3.0.7",
+      "dependencies": [
+        "typed_data"
+      ]
+    },
+    {
+      "name": "async",
+      "version": "2.13.0",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "path",
+      "version": "1.9.1",
+      "dependencies": []
+    },
+    {
+      "name": "rxdart",
+      "version": "0.28.0",
+      "dependencies": []
+    },
+    {
+      "name": "audio_session",
+      "version": "0.1.25",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "meta",
+        "rxdart"
+      ]
+    },
+    {
+      "name": "just_audio_web",
+      "version": "0.4.16",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "just_audio_platform_interface",
+        "synchronized",
+        "web"
+      ]
+    },
+    {
+      "name": "just_audio_platform_interface",
+      "version": "4.6.0",
+      "dependencies": [
+        "flutter",
+        "plugin_platform_interface"
+      ]
+    },
+    {
       "name": "path_provider_windows",
       "version": "2.3.0",
       "dependencies": [
@@ -206,44 +269,6 @@
       ]
     },
     {
-      "name": "win32",
-      "version": "5.15.0",
-      "dependencies": [
-        "ffi"
-      ]
-    },
-    {
-      "name": "path",
-      "version": "1.9.1",
-      "dependencies": []
-    },
-    {
-      "name": "ffi",
-      "version": "2.1.5",
-      "dependencies": []
-    },
-    {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "flutter_plugin_android_lifecycle",
-      "version": "2.0.33",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "typed_data",
       "version": "1.4.0",
       "dependencies": [
@@ -251,16 +276,9 @@
       ]
     },
     {
-      "name": "meta",
-      "version": "1.17.0",
+      "name": "ffi",
+      "version": "2.1.5",
       "dependencies": []
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.7",
-      "dependencies": [
-        "typed_data"
-      ]
     },
     {
       "name": "flutter_shaders",
@@ -337,6 +355,30 @@
       "dependencies": []
     },
     {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "synchronized",
+      "version": "3.4.0",
+      "dependencies": []
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
       "name": "platform",
       "version": "3.1.6",
       "dependencies": []
@@ -363,11 +405,6 @@
       ]
     },
     {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
       "name": "http_parser",
       "version": "4.1.2",
       "dependencies": [
@@ -375,14 +412,6 @@
         "source_span",
         "string_scanner",
         "typed_data"
-      ]
-    },
-    {
-      "name": "async",
-      "version": "2.13.0",
-      "dependencies": [
-        "collection",
-        "meta"
       ]
     },
     {
@@ -486,60 +515,41 @@
       ]
     },
     {
-      "name": "just_audio",
-      "version": "0.9.46",
+      "name": "file_picker",
+      "version": "8.3.7",
       "dependencies": [
-        "async",
-        "audio_session",
-        "crypto",
+        "cross_file",
+        "ffi",
         "flutter",
-        "just_audio_platform_interface",
-        "just_audio_web",
-        "meta",
+        "flutter_plugin_android_lifecycle",
+        "flutter_web_plugins",
         "path",
-        "path_provider",
-        "rxdart",
-        "uuid"
+        "plugin_platform_interface",
+        "web",
+        "win32"
       ]
     },
     {
-      "name": "audio_session",
-      "version": "0.1.25",
+      "name": "win32",
+      "version": "5.15.0",
       "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
+        "ffi"
+      ]
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "version": "2.0.33",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "cross_file",
+      "version": "0.3.5+1",
+      "dependencies": [
         "meta",
-        "rxdart"
-      ]
-    },
-    {
-      "name": "just_audio_web",
-      "version": "0.4.16",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
-        "just_audio_platform_interface",
-        "synchronized",
         "web"
       ]
-    },
-    {
-      "name": "just_audio_platform_interface",
-      "version": "4.6.0",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "synchronized",
-      "version": "3.4.0",
-      "dependencies": []
-    },
-    {
-      "name": "rxdart",
-      "version": "0.28.0",
-      "dependencies": []
     }
   ],
   "configVersion": 1
