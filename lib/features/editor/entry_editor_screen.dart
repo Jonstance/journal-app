@@ -14,6 +14,7 @@ import '../../data/services/attachments_service.dart';
 import '../library/library_screen.dart';
 import '../library/search_screen.dart';
 import '../reader/reader_screen.dart';
+import '../settings/focus_mode_controller.dart';
 import '../settings/settings_screen.dart';
 import 'entry_draft_controller.dart';
 import 'entry_header.dart';
@@ -75,9 +76,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   String _bulletPrefixForType(EntryType type) {
     switch (type) {
       case EntryType.bullets:
-        return '• ';
       case EntryType.gratitude:
-        return '• ';
       case EntryType.wins:
         return '• ';
       case EntryType.freeform:
@@ -106,6 +105,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
 
     final theme = Theme.of(context);
     final state = ref.watch(entryDraftControllerProvider);
+    final focusMode = ref.watch(focusModeProvider);
 
     return AppScaffold(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -122,58 +122,54 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                       weatherSummary: state.weatherSummary,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
+                  if (focusMode)
+                    IconButton(
+                      tooltip: 'Exit focus mode',
+                      onPressed: () => ref.read(focusModeProvider.notifier).toggle(),
+                      icon: const Icon(Icons.fullscreen_exit_outlined),
+                    )
+                  else ...[
+                    IconButton(
+                      onPressed: () => Navigator.of(context).push(
                         PageRouteBuilder(
                           pageBuilder: (_, __, ___) => const ReaderScreen(),
-                          transitionsBuilder: (_, animation, __, child) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
+                          transitionsBuilder: (_, animation, __, child) =>
+                              FadeTransition(opacity: animation, child: child),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.chrome_reader_mode_outlined),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
+                      ),
+                      icon: const Icon(Icons.chrome_reader_mode_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).push(
                         PageRouteBuilder(
                           pageBuilder: (_, __, ___) => const SearchScreen(),
-                          transitionsBuilder: (_, animation, __, child) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
+                          transitionsBuilder: (_, animation, __, child) =>
+                              FadeTransition(opacity: animation, child: child),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.search),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
+                      ),
+                      icon: const Icon(Icons.search),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).push(
                         PageRouteBuilder(
                           pageBuilder: (_, __, ___) => const LibraryScreen(),
-                          transitionsBuilder: (_, animation, __, child) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
+                          transitionsBuilder: (_, animation, __, child) =>
+                              FadeTransition(opacity: animation, child: child),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.calendar_month_outlined),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
+                      ),
+                      icon: const Icon(Icons.calendar_month_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).push(
                         PageRouteBuilder(
                           pageBuilder: (_, __, ___) => const SettingsScreen(),
-                          transitionsBuilder: (_, animation, __, child) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
+                          transitionsBuilder: (_, animation, __, child) =>
+                              FadeTransition(opacity: animation, child: child),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.tune),
-                  ),
+                      ),
+                      icon: const Icon(Icons.tune),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 16),
@@ -183,14 +179,15 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   state.type.description,
                   key: ValueKey(state.type),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
               TypeSwitcher(
                 value: state.type,
-                onChanged: (type) => ref.read(entryDraftControllerProvider.notifier).updateType(type),
+                onChanged: (type) =>
+                    ref.read(entryDraftControllerProvider.notifier).updateType(type),
               ),
               const SizedBox(height: 18),
               Row(
@@ -198,7 +195,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   Text(
                     'Mood',
                     style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -219,7 +216,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                       state.isSaving ? 'Saving…' : 'All changes saved',
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -241,7 +238,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    state.moodColor!.withOpacity(0.5),
+                                    state.moodColor!.withValues(alpha: 0.5),
                                     Colors.transparent,
                                   ],
                                 ),
@@ -268,7 +265,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 border: InputBorder.none,
                                 hintText: _hintForType(state.type),
                                 hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.35),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.35),
                                 ),
                               ),
                             ),
@@ -287,15 +284,15 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     Text(
                       'Voice memo',
                       style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 10),
                     ...state.attachments
-                        .where((attachment) => attachment.type == AttachmentType.audio)
-                        .map((attachment) => Padding(
+                        .where((a) => a.type == AttachmentType.audio)
+                        .map((a) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: VoiceMemoPlayer(memo: attachment),
+                              child: VoiceMemoPlayer(memo: a),
                             )),
                   ],
                 ),
@@ -312,7 +309,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   Text(
                     state.isSaving ? 'Saving…' : 'All changes saved',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -343,7 +340,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary.withOpacity(0.18),
+                      color: theme.colorScheme.secondary.withValues(alpha: 0.18),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -402,7 +399,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final selected = text.substring(start, end);
     final wrapped = '$wrapper$selected$wrapper';
     _controller.text = text.replaceRange(start, end, wrapped);
-    _controller.selection = TextSelection(baseOffset: start, extentOffset: start + wrapped.length);
+    _controller.selection =
+        TextSelection(baseOffset: start, extentOffset: start + wrapped.length);
   }
 
   void _toggleQuoteForSelection() {
@@ -419,8 +417,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
 
     final trimmed = line.trimLeft();
     final hasQuote = trimmed.startsWith('> ');
-    final prefix = hasQuote ? '' : '> ';
-    final updatedLine = hasQuote ? line.replaceFirst(RegExp(r'\s*> '), '') : '$prefix$line';
+    final updatedLine =
+        hasQuote ? line.replaceFirst(RegExp(r'\s*> '), '') : '> $line';
 
     _controller.text = text.replaceRange(lineStart, effectiveEnd, updatedLine);
     final delta = updatedLine.length - line.length;
@@ -469,7 +467,7 @@ class _MarkdownToolbar extends StatelessWidget {
         Text(
           'Markdown-lite',
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           ),
         ),
       ],
@@ -494,7 +492,7 @@ class _ToolbarButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withOpacity(0.7),
+          color: theme.colorScheme.surface.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: theme.dividerColor),
         ),

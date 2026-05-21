@@ -9,6 +9,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await LocalJournalRepository.ensureInitialized();
+  await Hive.openBox('app_prefs');
 
   runApp(const ProviderScope(child: JournalApp()));
 }

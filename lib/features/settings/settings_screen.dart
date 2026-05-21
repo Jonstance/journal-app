@@ -6,6 +6,7 @@ import '../../core/theme/theme_controller.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../data/services/export_service.dart';
+import 'focus_mode_controller.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -51,12 +52,12 @@ class SettingsScreen extends ConsumerWidget {
                 Text('Privacy', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 8),
                 Text(
-                  'Your journal lives on-device by default. Sync is optional and will be end-to-end encrypted.',
+                  'Your journal lives on-device. Sync is optional and will be end-to-end encrypted.',
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => _showSyncComingSoon(context),
                   child: const Text('Enable encrypted sync'),
                 ),
               ],
@@ -70,13 +71,23 @@ class SettingsScreen extends ConsumerWidget {
                 Text('Focus mode', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 8),
                 Text(
-                  'Ambient sounds and lock-screen widgets can be configured here.',
+                  'Hide navigation buttons while writing for a distraction-free experience.',
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Customize focus mode'),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final focusMode = ref.watch(focusModeProvider);
+                    return SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Distraction-free writing',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                      value: focusMode,
+                      onChanged: (_) => ref.read(focusModeProvider.notifier).toggle(),
+                    );
+                  },
                 ),
               ],
             ),
@@ -115,6 +126,57 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showSyncComingSoon(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: theme.dividerColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text('Encrypted sync', style: theme.textTheme.titleLarge),
+              const SizedBox(height: 12),
+              Text(
+                'Cross-device sync is coming in a future update. When enabled, your entries will be encrypted on-device before leaving — only you will hold the key.',
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Until then, use the backup feature below to move your journal between devices.',
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Got it'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -229,7 +291,7 @@ class SettingsScreen extends ConsumerWidget {
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: matches
                                   ? Theme.of(context).colorScheme.secondary
-                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                       ),
                     );
@@ -326,7 +388,7 @@ class _ThemeOption extends StatelessWidget {
       title: Text(label, style: theme.textTheme.bodyLarge),
       trailing: selected
           ? Icon(Icons.check_circle, color: theme.colorScheme.secondary)
-          : Icon(Icons.circle_outlined, color: theme.colorScheme.onSurface.withOpacity(0.4)),
+          : Icon(Icons.circle_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
       onTap: onTap,
     );
   }
