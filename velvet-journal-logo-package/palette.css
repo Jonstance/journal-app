@@ -1,0 +1,8 @@
+:root {
+  /* Velvet Journal — brand palette */
+  --vj-ink:    #2A1820;   /* near-black, purple undertone */
+  --vj-velvet: #5B2A4A;/* primary */
+  --vj-rose:   #7A3B5C;  /* accent */
+  --vj-cream:  #F4EFE6; /* surface */
+  --vj-dusk:   #1A0F15;  /* on-dark surface */
+}

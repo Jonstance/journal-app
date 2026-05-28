@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Velvet Journal app icon</title>
+  <rect width="1024" height="1024" rx="230" ry="230" fill="#F4EFE6"></rect>
+  <svg x="226" y="226" width="573" height="573" viewBox="0 0 100 100">
+    <path fill="#5B2A4A" fill-rule="evenodd" d="M 14 16 L 50 86 L 86 16 L 68 16 L 50 52 L 32 16 Z M 53 58 A 3 3 0 1 1 47 58 A 3 3 0 1 1 53 58 Z M 48.5 64 L 51.5 64 L 51.5 80 L 48.5 80 Z"></path>
+  </svg>
+</svg>

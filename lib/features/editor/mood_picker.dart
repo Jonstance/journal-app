@@ -30,13 +30,13 @@ class MoodPicker extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.45),
+                    color: color.withValues(alpha: 0.45),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
                 ],
                 border: value == color
-                    ? Border.all(color: Colors.white.withOpacity(0.9), width: 2)
+                    ? Border.all(color: Colors.white.withValues(alpha: 0.9), width: 2)
                     : null,
               ),
             ),

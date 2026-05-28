@@ -94,7 +94,7 @@ class JournalEntry {
       'content': content,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'moodColor': moodColor?.value,
+      'moodColor': moodColor?.toARGB32(),
       'tags': tags,
       'attachments': attachments.map((attachment) => attachment.toMap()).toList(),
       'location': location,

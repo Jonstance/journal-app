@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/theme_controller.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
+import '../../data/services/ai_service.dart';
 import '../../data/services/export_service.dart';
 import 'focus_mode_controller.dart';
 
@@ -92,6 +92,8 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          _AiSettingsCard(),
           const SizedBox(height: 16),
           GlassCard(
             child: Column(
@@ -370,6 +372,96 @@ Color _strengthColor(BuildContext context, double strength) {
   if (strength >= 0.55) return Colors.orangeAccent;
   if (strength >= 0.35) return Colors.deepOrangeAccent;
   return Colors.redAccent;
+}
+
+class _AiSettingsCard extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_AiSettingsCard> createState() => _AiSettingsCardState();
+}
+
+class _AiSettingsCardState extends ConsumerState<_AiSettingsCard> {
+  final _controller = TextEditingController();
+  bool _saved = false;
+  bool _obscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(aiServiceProvider).getApiKey().then((key) {
+      if (mounted && key != null) {
+        _controller.text = key;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    await ref.read(aiServiceProvider).saveApiKey(_controller.text);
+    if (!mounted) return;
+    setState(() => _saved = true);
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) setState(() => _saved = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.secondary;
+
+    return GlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_awesome_outlined, size: 18, color: accent),
+              const SizedBox(width: 8),
+              Text('AI features', style: theme.textTheme.titleLarge),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Paste your Claude API key to enable writing prompts and AI reflections. Your key is stored on-device only.',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            obscureText: _obscure,
+            decoration: InputDecoration(
+              hintText: 'sk-ant-…',
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: _save,
+                child: const Text('Save key'),
+              ),
+              if (_saved) ...[
+                const SizedBox(width: 12),
+                Icon(Icons.check_circle_outline, color: accent, size: 18),
+                const SizedBox(width: 4),
+                Text('Saved', style: theme.textTheme.bodySmall?.copyWith(color: accent)),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ThemeOption extends StatelessWidget {

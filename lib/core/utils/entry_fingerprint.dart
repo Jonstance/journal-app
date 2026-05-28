@@ -12,7 +12,7 @@ class EntryFingerprint {
 
   static EntryFingerprint fromSeed(String seed, {Color? mood}) {
     if (mood != null) {
-      return EntryFingerprint(mood, mood.withOpacity(0.5));
+      return EntryFingerprint(mood, mood.withValues(alpha: 0.5));
     }
     final hash = seed.codeUnits.fold<int>(0, (prev, code) => prev + code);
     final palette = AppColors.moodPalette;
@@ -25,11 +25,11 @@ class EntryFingerprint {
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [primary.withOpacity(0.7), secondary.withOpacity(0.4)],
+      colors: [primary.withValues(alpha: 0.7), secondary.withValues(alpha: 0.4)],
     );
   }
 
   double tintOpacity() {
-    return 0.18 + Random(primary.value).nextDouble() * 0.12;
+    return 0.18 + Random(primary.toARGB32()).nextDouble() * 0.12;
   }
 }

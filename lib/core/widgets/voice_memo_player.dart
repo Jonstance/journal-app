@@ -50,7 +50,7 @@ class _VoiceMemoPlayerState extends State<VoiceMemoPlayer> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.7),
+        color: theme.colorScheme.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: theme.dividerColor),
       ),
@@ -85,7 +85,7 @@ class _VoiceMemoPlayerState extends State<VoiceMemoPlayer> {
                       bars: _bars,
                       progress: progress.clamp(0.0, 1.0),
                       activeColor: theme.colorScheme.secondary,
-                      inactiveColor: theme.colorScheme.onSurface.withOpacity(0.2),
+                      inactiveColor: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     );
                   },
                 ),
@@ -101,7 +101,7 @@ class _VoiceMemoPlayerState extends State<VoiceMemoPlayer> {
               return Text(
                 '${_format(position)} · ${_format(total)}',
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               );
             },

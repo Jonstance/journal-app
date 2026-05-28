@@ -22,7 +22,7 @@ class PillButton extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
       decoration: BoxDecoration(
-        color: isActive ? theme.colorScheme.secondary.withOpacity(0.15) : theme.colorScheme.surface.withOpacity(0.6),
+        color: isActive ? theme.colorScheme.secondary.withValues(alpha: 0.15) : theme.colorScheme.surface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
           color: isActive ? theme.colorScheme.secondary : theme.dividerColor,
@@ -37,7 +37,7 @@ class PillButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 16, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                Icon(icon, size: 16, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                 const SizedBox(width: 6),
               ],
               Text(

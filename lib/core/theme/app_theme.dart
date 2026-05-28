@@ -6,9 +6,9 @@ import 'colors.dart';
 class AppTheme {
   static ThemeData light(double warmthShift) {
     final base = ThemeData.light(useMaterial3: true);
-    final background = Color.lerp(AppColors.offWhite, AppColors.mist, warmthShift) ?? AppColors.offWhite;
-    final surface = Color.lerp(Colors.white, AppColors.mist, warmthShift) ?? Colors.white;
-    final primary = Color.lerp(AppColors.navy, AppColors.teal, warmthShift) ?? AppColors.navy;
+    final background = Color.lerp(AppColors.cream, AppColors.mist, warmthShift) ?? AppColors.cream;
+    final surface = Color.lerp(const Color(0xFFFAF6F0), AppColors.mist, warmthShift) ?? const Color(0xFFFAF6F0);
+    final primary = Color.lerp(AppColors.velvet, AppColors.velvetLight, warmthShift) ?? AppColors.velvet;
     final accent = Color.lerp(AppColors.amber, AppColors.coral, warmthShift) ?? AppColors.amber;
 
     return base.copyWith(
@@ -16,9 +16,7 @@ class AppTheme {
         primary: primary,
         secondary: accent,
         surface: surface,
-        background: background,
         onSurface: AppColors.ink,
-        onBackground: AppColors.ink,
         brightness: Brightness.light,
       ),
       scaffoldBackgroundColor: background,
@@ -34,9 +32,9 @@ class AppTheme {
 
   static ThemeData dark(double warmthShift) {
     final base = ThemeData.dark(useMaterial3: true);
-    final background = Color.lerp(AppColors.charcoal, AppColors.deepMist, warmthShift) ?? AppColors.charcoal;
-    final surface = Color.lerp(const Color(0xFF15191C), const Color(0xFF1C2226), warmthShift) ?? const Color(0xFF15191C);
-    final primary = Color.lerp(AppColors.teal, AppColors.navy, warmthShift) ?? AppColors.teal;
+    final background = Color.lerp(AppColors.dusk, AppColors.deepMist, warmthShift) ?? AppColors.dusk;
+    final surface = Color.lerp(const Color(0xFF261520), const Color(0xFF2A1E24), warmthShift) ?? const Color(0xFF261520);
+    final primary = Color.lerp(AppColors.velvetLight, AppColors.velvet, warmthShift) ?? AppColors.velvetLight;
     final accent = Color.lerp(AppColors.coral, AppColors.amber, warmthShift) ?? AppColors.coral;
 
     return base.copyWith(
@@ -44,21 +42,32 @@ class AppTheme {
         primary: primary,
         secondary: accent,
         surface: surface,
-        background: background,
-        onSurface: const Color(0xFFE6E1D9),
-        onBackground: const Color(0xFFE6E1D9),
+        onSurface: AppColors.cream,
         brightness: Brightness.dark,
       ),
       scaffoldBackgroundColor: background,
-      textTheme: _textTheme(const Color(0xFFE6E1D9)),
+      textTheme: _textTheme(AppColors.cream),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      dividerColor: const Color(0xFF2A2F33),
+      dividerColor: const Color(0xFF3A2030),
     );
   }
+
+  static TextStyle brandMono({
+    double fontSize = 12,
+    FontWeight fontWeight = FontWeight.w500,
+    double letterSpacing = 0,
+    Color? color,
+  }) =>
+      GoogleFonts.ibmPlexMono(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+        color: color,
+      );
 
   static TextTheme _textTheme(Color color) {
     final serif = GoogleFonts.loraTextTheme();
@@ -76,10 +85,10 @@ class AppTheme {
       titleSmall: sans.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w600),
       bodyLarge: serif.bodyLarge?.copyWith(color: color, height: 1.6),
       bodyMedium: serif.bodyMedium?.copyWith(color: color, height: 1.6),
-      bodySmall: serif.bodySmall?.copyWith(color: color.withOpacity(0.8), height: 1.5),
+      bodySmall: serif.bodySmall?.copyWith(color: color.withValues(alpha: 0.8), height: 1.5),
       labelLarge: sans.labelLarge?.copyWith(color: color, fontWeight: FontWeight.w600),
-      labelMedium: sans.labelMedium?.copyWith(color: color.withOpacity(0.8), fontWeight: FontWeight.w600),
-      labelSmall: sans.labelSmall?.copyWith(color: color.withOpacity(0.7), fontWeight: FontWeight.w600),
+      labelMedium: sans.labelMedium?.copyWith(color: color.withValues(alpha: 0.8), fontWeight: FontWeight.w600),
+      labelSmall: sans.labelSmall?.copyWith(color: color.withValues(alpha: 0.7), fontWeight: FontWeight.w600),
     );
   }
 }

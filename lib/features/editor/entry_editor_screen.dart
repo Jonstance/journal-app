@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/utils/date_formatters.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_scaffold.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/pill_button.dart';
@@ -11,6 +11,8 @@ import '../../core/widgets/voice_memo_player.dart';
 import '../../data/models/attachment_ref.dart';
 import '../../data/models/journal_entry.dart';
 import '../../data/services/attachments_service.dart';
+import '../../data/services/ai_service.dart';
+import '../ai/ai_providers.dart';
 import '../library/library_screen.dart';
 import '../library/search_screen.dart';
 import '../reader/reader_screen.dart';
@@ -33,6 +35,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   late final FocusNode _focusNode;
   bool _isFormatting = false;
   bool _showCompletion = false;
+  String? _promptText;
+  bool _isLoadingPrompt = false;
 
   @override
   void initState() {
@@ -84,6 +88,30 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     }
   }
 
+  Future<void> _fetchPrompt() async {
+    final type = ref.read(entryDraftControllerProvider).type;
+    final apiKey = await ref.read(aiServiceProvider).getApiKey();
+    if (apiKey == null || apiKey.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Add your Claude API key in Settings to use AI prompts.'),
+        ),
+      );
+      return;
+    }
+    setState(() {
+      _isLoadingPrompt = true;
+      _promptText = null;
+    });
+    final prompt = await ref.read(writingPromptProvider(type).future);
+    if (!mounted) return;
+    setState(() {
+      _promptText = prompt;
+      _isLoadingPrompt = false;
+    });
+  }
+
   Future<void> _completeEntry() async {
     HapticFeedback.mediumImpact();
     await ref.read(entryDraftControllerProvider.notifier).completeEntry();
@@ -114,6 +142,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _BrandHeader(),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   Expanded(
@@ -276,6 +306,24 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   ),
                 ),
               ),
+              if (_isLoadingPrompt || _promptText != null) ...[
+                const SizedBox(height: 12),
+                _PromptCard(
+                  text: _promptText,
+                  isLoading: _isLoadingPrompt,
+                  onUse: () {
+                    final current = _controller.text;
+                    final insert = _promptText ?? '';
+                    _controller.text =
+                        current.isEmpty ? insert : '$insert\n\n$current';
+                    _controller.selection = TextSelection.collapsed(
+                      offset: _controller.text.length,
+                    );
+                    setState(() => _promptText = null);
+                  },
+                  onDismiss: () => setState(() => _promptText = null),
+                ),
+              ],
               if (state.attachments.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Column(
@@ -318,9 +366,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
               Row(
                 children: [
                   PillButton(
-                    label: 'Today · ${DateFormatters.short.format(DateTime.now())}',
+                    label: _isLoadingPrompt ? 'Thinking…' : 'Spark',
                     icon: Icons.auto_awesome_outlined,
-                    onPressed: () {},
+                    onPressed: _isLoadingPrompt ? () {} : _fetchPrompt,
                   ),
                   const Spacer(),
                   PillButton(
@@ -498,6 +546,152 @@ class _ToolbarButton extends StatelessWidget {
         ),
         child: Text(label, style: textStyle ?? theme.textTheme.labelLarge),
       ),
+    );
+  }
+}
+
+class _BrandHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              isDark ? 'assets/images/mark-cream.png' : 'assets/images/mark.png',
+              width: 18,
+              height: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'VELVET   JOURNAL',
+              style: AppTheme.brandMono(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 3.5,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Icon(
+                  Icons.shield_outlined,
+                  size: 11,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.35),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'ON DEVICE',
+                  style: AppTheme.brandMono(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 2.0,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.35),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Divider(
+          height: 1,
+          thickness: 0.5,
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
+      ],
+    );
+  }
+}
+
+class _PromptCard extends StatelessWidget {
+  const _PromptCard({
+    required this.text,
+    required this.isLoading,
+    required this.onUse,
+    required this.onDismiss,
+  });
+
+  final String? text;
+  final bool isLoading;
+  final VoidCallback onUse;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.secondary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
+      ),
+      child: isLoading
+          ? Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: accent,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text('Getting a prompt…', style: theme.textTheme.bodyMedium),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.auto_awesome_outlined, size: 14, color: accent),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Prompt',
+                      style: theme.textTheme.labelSmall
+                          ?.copyWith(color: accent),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: onDismiss,
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(text ?? '', style: theme.textTheme.bodyMedium),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: onUse,
+                    style: TextButton.styleFrom(
+                      foregroundColor: accent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('Use this prompt'),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }

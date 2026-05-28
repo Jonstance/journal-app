@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
-import 'features/editor/entry_editor_screen.dart';
+import 'features/splash/splash_screen.dart';
 
 class JournalApp extends ConsumerWidget {
   const JournalApp({super.key});
@@ -18,7 +18,7 @@ class JournalApp extends ConsumerWidget {
       theme: AppTheme.light(themeState.warmthShift),
       darkTheme: AppTheme.dark(themeState.warmthShift),
       themeMode: themeState.themeMode,
-      home: const EntryEditorScreen(),
+      home: const SplashScreen(),
     );
   }
 }

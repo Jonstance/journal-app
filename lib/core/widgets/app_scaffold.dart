@@ -20,7 +20,7 @@ class AppScaffold extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               theme.colorScheme.background,
-              theme.colorScheme.surface.withOpacity(0.95),
+              theme.colorScheme.surface.withValues(alpha: 0.95),
             ],
           ),
         ),

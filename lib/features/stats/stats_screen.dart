@@ -5,6 +5,7 @@ import '../../core/theme/colors.dart';
 import '../../core/utils/date_formatters.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../data/models/journal_entry.dart';
+import '../ai/ai_providers.dart';
 import 'stats_providers.dart';
 
 class StatsScreen extends ConsumerWidget {
@@ -86,6 +87,8 @@ class StatsScreen extends ConsumerWidget {
                 longest: stats.longestStreak,
               ),
             ),
+            const SizedBox(height: 16),
+            const _AiInsightsCard(),
           ],
         );
       },
@@ -308,6 +311,110 @@ class _WordCloud extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class _AiInsightsCard extends ConsumerStatefulWidget {
+  const _AiInsightsCard();
+
+  @override
+  ConsumerState<_AiInsightsCard> createState() => _AiInsightsCardState();
+}
+
+class _AiInsightsCardState extends ConsumerState<_AiInsightsCard> {
+  bool _requested = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.secondary;
+
+    return GlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_awesome_outlined, size: 18, color: accent),
+              const SizedBox(width: 8),
+              Text('AI Reflection', style: theme.textTheme.titleLarge),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (!_requested) ...[
+            Text(
+              'Get a personalised reflection on your recent entries — patterns, themes, and emotional tone.',
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => setState(() => _requested = true),
+              icon: const Icon(Icons.auto_awesome_outlined, size: 16),
+              label: const Text('Reflect on my entries'),
+            ),
+          ] else ...[
+            Consumer(
+              builder: (context, ref, _) {
+                final insightsAsync = ref.watch(aiInsightsProvider);
+                return insightsAsync.when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 12),
+                        Text('Reflecting…'),
+                      ],
+                    ),
+                  ),
+                  error: (_, __) => Text(
+                    'Could not load insights. Check your API key in Settings.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                  data: (insight) {
+                    if (insight == null) {
+                      return Text(
+                        'Add your Claude API key in Settings to enable AI reflections.',
+                        style: theme.textTheme.bodyMedium,
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(insight, style: theme.textTheme.bodyMedium),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              ref.invalidate(aiInsightsProvider);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: accent,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text('Refresh'),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

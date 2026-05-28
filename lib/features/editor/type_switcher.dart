@@ -16,7 +16,7 @@ class TypeSwitcher extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.7),
+        color: theme.colorScheme.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: theme.dividerColor),
       ),
@@ -35,7 +35,7 @@ class TypeSwitcher extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: value == type
-                        ? theme.colorScheme.secondary.withOpacity(0.18)
+                        ? theme.colorScheme.secondary.withValues(alpha: 0.18)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(999),
                   ),
@@ -44,7 +44,7 @@ class TypeSwitcher extends StatelessWidget {
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: value == type
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.7),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ),

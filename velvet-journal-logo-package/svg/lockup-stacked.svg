@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" width="360" height="360">
+  <title>Velvet Journal — stacked lockup</title>
+  
+  <svg x="120" y="80" width="120" height="120" viewBox="0 0 100 100">
+    <path fill="#5B2A4A" fill-rule="evenodd" d="M 14 16 L 50 86 L 86 16 L 68 16 L 50 52 L 32 16 Z M 53 58 A 3 3 0 1 1 47 58 A 3 3 0 1 1 53 58 Z M 48.5 64 L 51.5 64 L 51.5 80 L 48.5 80 Z"></path>
+  </svg>
+  <line x1="166" y1="232" x2="194" y2="232" stroke="rgba(42,24,32,0.2)" stroke-width="1"></line>
+  <text x="180" y="270" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, Menlo, monospace" font-size="18" font-weight="500" letter-spacing="3.96" fill="#2A1820" text-rendering="geometricPrecision">VELVET  JOURNAL</text>
+</svg>

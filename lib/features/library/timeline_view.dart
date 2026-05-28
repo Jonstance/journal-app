@@ -84,7 +84,7 @@ class _EntryCard extends StatelessWidget {
                 Text(
                   DateFormatters.full.format(entry.createdAt),
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -100,7 +100,7 @@ class _EntryCard extends StatelessWidget {
                     Text(
                       entry.type.label,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -108,7 +108,7 @@ class _EntryCard extends StatelessWidget {
                       Text(
                         entry.weatherSummary!,
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                   ],

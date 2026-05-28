@@ -1,0 +1,1 @@
+- [Brand — Velvet Journal](project_brand.md) — Brand palette (#5B2A4A velvet, #F4EFE6 cream), asset paths, and key design decisions for onboarding, splash, and editor

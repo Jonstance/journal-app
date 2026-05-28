@@ -37,7 +37,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             decoration: InputDecoration(
               hintText: 'Search your entries…',
               filled: true,
-              fillColor: theme.colorScheme.surface.withOpacity(0.8),
+              fillColor: theme.colorScheme.surface.withValues(alpha: 0.8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide(color: theme.dividerColor),

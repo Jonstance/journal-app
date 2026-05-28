@@ -67,7 +67,7 @@ class _ReaderContent extends ConsumerWidget {
                 Text(
                   entry.type.label,
                   style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -116,7 +116,7 @@ class _ReaderContent extends ConsumerWidget {
                   Text(
                     'Boosted by ${entry.moodColor != null ? 'your mood' : 'your writing cadence'}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -193,7 +193,7 @@ class _InsightChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withOpacity(0.7),
+          color: theme.colorScheme.surface.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: theme.dividerColor),
         ),

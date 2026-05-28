@@ -22,7 +22,7 @@ class LibraryScreen extends StatelessWidget {
           bottom: TabBar(
             indicatorColor: theme.colorScheme.secondary,
             labelColor: theme.colorScheme.onSurface,
-            unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
+            unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             tabs: const [
               Tab(text: 'Timeline'),
               Tab(text: 'Calendar'),

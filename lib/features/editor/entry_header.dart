@@ -32,7 +32,7 @@ class EntryHeader extends StatelessWidget {
         Text(
           metadata.join(' · '),
           style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],

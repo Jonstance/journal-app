@@ -47,7 +47,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
               calendarStyle: CalendarStyle(
                 outsideDaysVisible: false,
                 todayDecoration: BoxDecoration(
-                  color: theme.colorScheme.secondary.withOpacity(0.25),
+                  color: theme.colorScheme.secondary.withValues(alpha: 0.25),
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
