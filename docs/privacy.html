@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Velvet Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --velvet:   #5B2A4A;
+      --cream:    #F4EFE6;
+      --ink:      #2A1820;
+      --ink-soft: #4A2A3A;
+      --mist:     #E0D9D0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      padding: 0 24px;
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 64px 0 96px;
+    }
+
+    /* Header */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 56px;
+    }
+
+    .mark {
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3.5px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+    }
+
+    /* Page title */
+    h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--velvet);
+      margin-bottom: 8px;
+    }
+
+    .updated {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--ink-soft);
+      opacity: 0.6;
+      margin-bottom: 48px;
+    }
+
+    /* Sections */
+    h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--velvet);
+      margin: 40px 0 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+
+    /* Summary card */
+    .summary {
+      background: white;
+      border: 1px solid var(--mist);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin: 32px 0 48px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .summary-row:last-child { margin-bottom: 0; }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--velvet);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .summary-text {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      border-top: 1px solid var(--mist);
+      margin: 40px 0;
+    }
+
+    /* Contact */
+    a {
+      color: var(--velvet);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+    }
+
+    a:hover { opacity: 0.75; }
+
+    /* Footer */
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--mist);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--ink-soft);
+      opacity: 0.45;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Brand header -->
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#5B2A4A" fill-rule="evenodd"
+          d="M 14 16 L 50 86 L 86 16 L 68 16 L 50 52 L 32 16 Z
+             M 53 58 A 3 3 0 1 1 47 58 A 3 3 0 1 1 53 58 Z
+             M 48.5 64 L 51.5 64 L 51.5 80 L 48.5 80 Z" />
+      </svg>
+      <span class="brand-name">Velvet &nbsp; Journal</span>
+    </div>
+
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated &nbsp;·&nbsp; 31 May 2026</p>
+
+    <!-- TL;DR summary -->
+    <div class="summary">
+      <div class="summary-row">
+        <div class="dot"></div>
+        <span class="summary-text">Your journal entries stay on your device. We never see them.</span>
+      </div>
+      <div class="summary-row">
+        <div class="dot"></div>
+        <span class="summary-text">No account required. No analytics. No ads.</span>
+      </div>
+      <div class="summary-row">
+        <div class="dot"></div>
+        <span class="summary-text">Backups are encrypted on-device before you choose where to save them.</span>
+      </div>
+      <div class="summary-row">
+        <div class="dot"></div>
+        <span class="summary-text">AI prompts are optional and require your own API key.</span>
+      </div>
+    </div>
+
+    <h2>What we collect</h2>
+    <p>Nothing. Velvet Journal does not collect, transmit, or store any personal data on external servers. All journal entries, preferences, and settings are stored locally on your device using on-device storage.</p>
+
+    <h2>Encrypted backups</h2>
+    <p>The backup feature lets you export your journal as an encrypted <code>.journal</code> file, secured with AES-256-GCM encryption and a password you choose. This file is created and encrypted entirely on your device. We never receive, transmit, or have access to it. You decide where to save it — iCloud, Google Drive, a USB drive, or anywhere else.</p>
+
+    <h2>AI writing prompts (optional)</h2>
+    <p>Velvet Journal includes an optional AI feature that generates context-aware writing prompts. To use it, you must provide your own Claude API key from Anthropic. This key is stored only on your device.</p>
+    <p>When you request a prompt, only the entry type (e.g. "Gratitude" or "Freeform") is sent to Anthropic's API — never the content of your entries. Velvet Journal does not operate any intermediary server; your device communicates directly with Anthropic. Anthropic's own <a href="https://www.anthropic.com/privacy">Privacy Policy</a> applies to those requests.</p>
+    <p>If you never set an API key, no data of any kind is sent to any external service.</p>
+
+    <h2>Permissions</h2>
+    <p>The app may request access to your microphone solely to record voice memos that are saved locally to your device. It requests internet access only when the optional AI feature is in use.</p>
+
+    <h2>Children</h2>
+    <p>Velvet Journal is not directed at children under 13. We do not knowingly collect any information from children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes materially, we will update the date above and note the change in the next app release.</p>
+
+    <hr />
+
+    <h2>Contact</h2>
+    <p>Questions? Email <a href="mailto:constancejco@gmail.com">constancejco@gmail.com</a></p>
+
+    <footer>Velvet Journal &nbsp;·&nbsp; Private &nbsp;·&nbsp; On-Device</footer>
+  </div>
+</body>
+</html>
