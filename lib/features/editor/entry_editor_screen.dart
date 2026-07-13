@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -37,6 +39,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   bool _showCompletion = false;
   String? _promptText;
   bool _isLoadingPrompt = false;
+  bool _isRecording = false;
+  int _recordingSeconds = 0;
+  Timer? _recordingTimer;
 
   @override
   void initState() {
@@ -53,6 +58,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     _controller.removeListener(_handleTextChanged);
     _controller.dispose();
     _focusNode.dispose();
+    _recordingTimer?.cancel();
     super.dispose();
   }
 
@@ -349,9 +355,19 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
               Row(
                 children: [
                   OutlinedButton.icon(
-                    onPressed: () => _recordVoiceMemo(ref),
-                    icon: const Icon(Icons.mic_none),
-                    label: const Text('Add voice memo'),
+                    onPressed: () => _toggleRecording(ref),
+                    style: _isRecording
+                        ? OutlinedButton.styleFrom(
+                            foregroundColor: Colors.redAccent,
+                            side: const BorderSide(color: Colors.redAccent),
+                          )
+                        : null,
+                    icon: Icon(_isRecording ? Icons.stop_circle_outlined : Icons.mic_none),
+                    label: Text(
+                      _isRecording
+                          ? 'Recording ${_formatRecordingDuration(_recordingSeconds)}'
+                          : 'Add voice memo',
+                    ),
                   ),
                   const Spacer(),
                   Text(
@@ -421,13 +437,46 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     }
   }
 
-  Future<void> _recordVoiceMemo(WidgetRef ref) async {
+  Future<void> _toggleRecording(WidgetRef ref) async {
     HapticFeedback.selectionClick();
     final service = ref.read(attachmentsServiceProvider);
-    final memo = await service.recordAudio();
-    if (memo != null) {
-      ref.read(entryDraftControllerProvider.notifier).addAttachment(memo);
+
+    if (_isRecording) {
+      _recordingTimer?.cancel();
+      final memo = await service.stopRecording();
+      if (!mounted) return;
+      setState(() => _isRecording = false);
+      if (memo != null) {
+        ref.read(entryDraftControllerProvider.notifier).addAttachment(memo);
+      }
+      return;
     }
+
+    final started = await service.startRecording();
+    if (!started) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Microphone permission is required to record a voice memo.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isRecording = true;
+      _recordingSeconds = 0;
+    });
+    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() => _recordingSeconds++);
+    });
+  }
+
+  String _formatRecordingDuration(int totalSeconds) {
+    final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   void _wrapSelection(String wrapper) {
