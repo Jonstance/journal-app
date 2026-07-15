@@ -22,18 +22,22 @@ class ReaderScreen extends ConsumerWidget {
       return _ReaderContent(entry: entry!);
     }
 
+    final theme = Theme.of(context);
+    final appBar = AppBar(title: Text('Reader Mode', style: theme.textTheme.titleLarge));
+
     final entriesAsync = ref.watch(allEntriesProvider);
     return entriesAsync.when(
       data: (entries) {
         if (entries.isEmpty) {
-          return const AppScaffold(
-            child: Center(child: Text('No entries yet. Start journaling.')),
+          return AppScaffold(
+            appBar: appBar,
+            child: const Center(child: Text('No entries yet. Start journaling.')),
           );
         }
         return _ReaderContent(entry: entries.first);
       },
-      loading: () => const AppScaffold(child: Center(child: CircularProgressIndicator())),
-      error: (err, _) => AppScaffold(child: Center(child: Text('Could not load entry: $err'))),
+      loading: () => AppScaffold(appBar: appBar, child: const Center(child: CircularProgressIndicator())),
+      error: (err, _) => AppScaffold(appBar: appBar, child: Center(child: Text('Could not load entry: $err'))),
     );
   }
 }
